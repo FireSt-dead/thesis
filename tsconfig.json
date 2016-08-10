@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "sourceMap": true
+    },
+    "files": [
+        "api-github/api-github.ts",
+        "test/test.ts"
+    ],
+    "compileOnSave": true
+}

@@ -1,0 +1,24 @@
+{
+  "name": "thesis-cankov",
+  "version": "1.0.0",
+  "description": "Panayot Cankov Thesis",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FireSt-dead/thesis.git"
+  },
+  "author": "Panayot Cankov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FireSt-dead/thesis/issues"
+  },
+  "homepage": "https://github.com/FireSt-dead/thesis#readme",
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "typescript": "^1.8.10"
+  }
+}
