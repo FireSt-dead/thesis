@@ -1,0 +1,7 @@
+"use strict";
+// this import should be first in order to load some required settings (like globals and reflect-metadata)
+var application_1 = require("nativescript-angular/application");
+var app_component_1 = require("./app.component");
+var NS_HTTP_PROVIDERS = require("nativescript-angular/http").NS_HTTP_PROVIDERS;
+application_1.nativeScriptBootstrap(app_component_1.AppComponent, [NS_HTTP_PROVIDERS]);
+//# sourceMappingURL=main.js.map
