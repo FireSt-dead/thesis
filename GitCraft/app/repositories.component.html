@@ -1,0 +1,23 @@
+<GridLayout rows="auto, auto, *">
+    <SearchBar #searchbar row="0" hint="Search" [text]="searchPhrase" (clear)="onClear" (submit)="onSearch(searchbar.text)"></SearchBar>
+    <SegmentedBar #segmentedbar row="1" selectedIndex="0" (selectedIndexChange)="prop=segmentedbar.selectedIndex">
+        <SegmentedBarItem title="organization"></SegmentedBarItem>
+        <SegmentedBarItem title="repositories"></SegmentedBarItem>
+        <SegmentedBarItem title="user"></SegmentedBarItem>
+    </SegmentedBar>
+    <ListView row="2" [items]="results" rowHeight="44">
+        <template let-repository="item">
+            <GridLayout>
+                
+                <Label margin="0 0 0 46" [text]='repository.full_name' horizontalAlignment="left" verticalAlignment="center" style.fontSize="16"></Label>
+                <StackLayout orientation="horizontal" horizontalAlignment="right" verticalAlignment="bottom" style.fontSize="10.5" color="#AAAAAA">
+                    <Label minWidth="50" [text]='"★ " + repository.watchers + " "'></Label>
+                    <Label minWidth="50" [text]='"⑂ " + repository.forks + " "'></Label>
+                    <Label minWidth="50" [text]='"🐛 " + repository.open_issues + " "'></Label>
+                </StackLayout>
+
+                <Image [src]='repository.owner.avatar_url' width="40" height="40" horizontalAlignment="left" verticalAlignment="stretch"></Image>
+            </GridLayout>
+        </template>
+    </ListView>
+</GridLayout>
