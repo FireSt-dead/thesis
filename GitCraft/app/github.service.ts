@@ -18,6 +18,19 @@ export class GitHub {
      */
     request(search: "search", what: "repositories", querry: SearchQuerry): Promise<SearchResult<Repository>>;
 
+    /**
+     * Get repository by owner and repository names.
+     */
+    request(repos: "repos", owner: string, repo: string): Promise<Repository>;
+
+    /**
+     * Get milestones for repository by owner and repository names.
+     * Example query: https://api.github.com/repos/NativeScript/NativeScript/milestones
+     */
+    request(repos: "repos", owner: string, repo: string, milestones: "milestones", querry?: MilestonesQuery): Promise<Milestone[]>;
+
+    request(repos: "repos", owner: string, repo: string, issues: "issues", query?: IssuesQuery): Promise<Issue[]>;
+
     request(... args: any[]): any;
     request(... args: (string | {})[]): any {
         let querryUri = "https://api.github.com/";
@@ -63,13 +76,81 @@ export interface Owner {
 export type SearchSort = "stars" | "forks" | "updated";
 export type Order = "asc" | "desc";
 
-interface SearchQuerry {
+export interface SearchQuerry {
     q: string;
     sort?: SearchSort;
     order?: Order;
 }
-interface SearchResult<T> {
+export interface SearchResult<T> {
     total_count: number;
     incomplete_results: boolean;
     items: Repository[];
+}
+
+export interface MilestonesQuery {
+    state?: "open" | "closed" | "all";
+    sort?: "due_on" | "completeness";
+    direction?: "asc" | "desc";
+}
+
+export interface Milestone {
+    title: string;
+    id: number;
+    number: number;
+    description: string;
+
+    creator: Owner;
+
+    open_issues: number;
+    closed_issues: number;
+    state: "open" | "closed";
+
+    /**
+     * Created at date in a string format: 2016-07-26T11:21:43Z.
+     */
+    created_at: string;
+
+    /**
+     * Created at date in a string format: 2016-07-26T11:21:43Z.
+     */
+    updated_at: string;
+
+    /**
+     * Created at date in a string format: 2016-07-26T11:21:43Z.
+     */
+    due_on: string;
+
+    /**
+     * Created at date in a string format: 2016-07-26T11:21:43Z.
+     */
+    closed_at: string;
+}
+
+interface IssuesQuery {
+    milestone?: number | "none" | "*";
+    state?: "all" | "open" | "closed";
+    assignee?: string | "*" | "none";
+    creator?: string;
+    mentioned?: string;
+
+    /**
+     * A list of comma separated label names. Example: bug,ui,@high
+     */
+    labels?: string;
+
+    /**
+     * What to sort results by. Can be either created, updated, comments. Default: created
+     */
+    sort?: string;
+
+    direction?: "asc" | "desc";
+
+    /**
+     * Only issues updated at or after this time are returned. This is a timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ.
+     */
+    since?: string;
+}
+
+interface Issue {
+
 }

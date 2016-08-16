@@ -1,0 +1,15 @@
+<ActionBar [title]="owner + '/' + name">
+    <NavigationButton android.systemIcon="ic_menu_back" (tap)="goBack()"></NavigationButton>
+</ActionBar>
+<GridLayout>
+    <ListView row="2" [items]="milestones" rowHeight="72" (itemTap)="onMilestoneTap($event)">
+        <template let-milestone="item">
+            <GridLayout class="milestone" rows="*, 8, *" columns="auto, *">
+                <Label class="title" row="0" colSpan="2" [text]="milestone.title"></Label>
+                <Progress [opacity]="milestone.state === 'open' ? 1 : 0.2" class="progress" row="1" colSpan="2" [value]="milestone.closed_issues / (milestone.open_issues + milestone.closed_issues) * 100"></Progress>
+                <Label class="counters" row="2" col="0" [text]="milestone.open_issues + ' open, ' + milestone.closed_issues + ' closed'"></Label>
+                <Label class="status" row="2" col="1" [text]="milestone.state === 'open' ? (milestone.due_on ? 'Due on ' + milestone.due_on : 'No due date') : 'Closed on ' + milestone.closed_at"></Label>
+            </GridLayout>
+        </template>
+    </ListView>
+</GridLayout>

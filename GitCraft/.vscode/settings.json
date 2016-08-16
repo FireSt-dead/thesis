@@ -5,7 +5,9 @@
         "**/.svn": true,
         "**/.hg": true,
         "**/.DS_Store": true,
-        "**/*.js": true,
-        "**/*.map": true
+        "app/**/*.js": true,
+        "app/**/*.map": true,
+        "app/**/*.css": true,
+        "hooks/": true
     }
 }
