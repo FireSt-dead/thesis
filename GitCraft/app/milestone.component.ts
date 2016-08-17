@@ -2,13 +2,13 @@ import {Component} from "@angular/core";
 import {GitHub, Repository, Organization, Milestone, Issue } from "./github.service";
 import {ItemEventData} from "ui/list-view";
 import {Router, ActivatedRoute} from "@angular/router";
-import {BackgroundColorPipe} from "./github.color.pipe";
+import {BackgroundColorPipe, ColorPipe} from "./github.color.pipe";
 @Component({
     selector: "Milestone",
     templateUrl: "milestone.component.html",
     styleUrls: ["milestone.component.css"],
     providers: [GitHub],
-    pipes: [BackgroundColorPipe]
+    pipes: [BackgroundColorPipe, ColorPipe]
 })
 export class MilestoneComponent {
 

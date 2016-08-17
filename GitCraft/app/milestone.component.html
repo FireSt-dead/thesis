@@ -4,10 +4,13 @@
 <GridLayout>
     <ListView row="2" [items]="issues" rowHeight="72">
         <template let-issue="item">
-            <GridLayout class="issue" rows="auto, auto">
+            <GridLayout class="issue" rows="auto, 24, *">
                <Label class="title" [text]="issue.title"></Label>
                <StackLayout class="labels" row="1" orientation="horizontal">
-                   <Label class="label" *ngFor="let label of issue.labels" [text]="label.name" [backgroundColor]="label.color | backgroundColor"></Label>
+                   <Label class="label" *ngFor="let label of issue.labels" [text]="label.name" [color]="label.color | color" [backgroundColor]="label.color | backgroundColor"></Label>
+               </StackLayout>
+               <StackLayout class="asignees" row="1" orientation="horizontal">
+                   <Image class="asignee" *ngFor="let assignee of issue.assignees" [src]="assignee.avatar_url"></Image>
                </StackLayout>
             </GridLayout>
         </template>
