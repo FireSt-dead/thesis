@@ -43,9 +43,10 @@ export class GitHub {
             for(let key in params) {
                 // TODO: Url escape
                 querryUri += (separate ? "&" : "") + key + "=" + params[key];
+                separate = true;
             }
         }
-        
+        console.log("Querry: " + querryUri);
         return this.http.get(querryUri)
             .toPromise()
             .then(response => Promise.resolve(response.json()));
@@ -151,6 +152,26 @@ interface IssuesQuery {
     since?: string;
 }
 
-interface Issue {
+export interface Issue {
+    id: number;
+    number: number;
+    title: string;
+    user: Owner;
+    labels: Label[];
+    state: "open" | "closed";
+    locked: boolean;
+    asignee: Owner;
+    asignees: Owner[];
+    milestone: Milestone;
+    comments: number;
 
+    created_at: string;
+    updated_at: string;
+    closed_at: string;
+    body: string;
+}
+
+export interface Label {
+    name: string;
+    color: string;
 }
