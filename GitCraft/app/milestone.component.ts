@@ -3,6 +3,8 @@ import {GitHub, Repository, Organization, Milestone, Issue } from "./github.serv
 import {ItemEventData} from "ui/list-view";
 import {Router, ActivatedRoute} from "@angular/router";
 import {BackgroundColorPipe, ColorPipe} from "./github.color.pipe";
+import {Location} from '@angular/common';
+
 @Component({
     selector: "Milestone",
     templateUrl: "milestone.component.html",
@@ -18,7 +20,7 @@ export class MilestoneComponent {
 
     issues: Issue[];
 
-    constructor(private github: GitHub, private router: Router, private route: ActivatedRoute) {
+    constructor(private github: GitHub, private router: Router, private route: ActivatedRoute, private location: Location) {
         console.log("Create MilestoneComponent");
     }
 
@@ -39,6 +41,6 @@ export class MilestoneComponent {
     }
 
     goBack() {
-        this.router.navigate(["/"]);
+        this.location.back();
     }
 }

@@ -1,6 +1,6 @@
 .issue {
     .title {
-        margin: 16 16 0 16;
+        margin: 16 4 0 16;
         horizontal-align: left;
         vertical-align: top;
         font-size: 16;
@@ -9,10 +9,13 @@
     }
     .labels {
         horizontal-align: left;
-        margin: 0 14;
+        vertical-align: top;
+        margin: 0 4 0 14;
+
         .label {
             margin: 2;
-            padding:2 6;
+            padding: 2 6;
+            text-align: center;
             font-size: 10.5;
             font-weight: 700;
             border-radius: 6;
@@ -20,14 +23,21 @@
     }
     .asignees {
         horizontal-align: right;
-        margin: 0 14;
+        vertical-align: top;
+        margin: 16 16 16 4;
 
-        .asignee {
-            margin: 2;
-            width: 24;
-            height: 24;
+        .assignee {
+            margin: 0 0 0 -18; /* TODO: All except the last or first */
+            width: 58;
+            height: 40;
             background-color: #EEF2F2;
-            border-radius: 6;
+            border-radius: 20;
+            border-width: 2;
+            border-color: #FFFFFF;
+        }
+        .assignee.first {
+            margin: 0;
+            width: 40;
         }
     }
 }

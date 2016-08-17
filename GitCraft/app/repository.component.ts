@@ -3,6 +3,7 @@ import {GitHub, Repository, Organization, Milestone } from "./github.service";
 import {ItemEventData} from "ui/list-view";
 import {Router, ActivatedRoute} from "@angular/router";
 import {MilestoneComponent} from "./milestone.component";
+import {Location} from '@angular/common';
 
 @Component({
     selector: "Repository",
@@ -17,7 +18,7 @@ export class RepositoryComponent {
 
     milestones: Milestone[];
 
-    constructor(private github: GitHub, private router: Router, private route: ActivatedRoute) {
+    constructor(private github: GitHub, private router: Router, private route: ActivatedRoute, private location: Location) {
         console.log("Create RepositoriesComponent");
     }
 
@@ -39,7 +40,7 @@ export class RepositoryComponent {
     }
 
     goBack() {
-        this.router.navigate(["/"]);
+        this.location.back();
     }
 
     public onMilestoneTap(args: ItemEventData) {
