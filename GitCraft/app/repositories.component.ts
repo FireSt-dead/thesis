@@ -1,23 +1,36 @@
-import {Component} from "@angular/core";
+import {Component, OnInit, OnDestroy, NgZone} from "@angular/core";
 import {GitHub, Repository, Organization} from "./github.service";
 import {ItemEventData} from "ui/list-view";
 import {Router} from "@angular/router";
+import {Location} from '@angular/common';
 
 @Component({
     selector: "Repositories",
     templateUrl: "repositories.component.html",
-    styleUrls: ["repositories.component.css"],
-    providers: [GitHub]
+    styleUrls: ["repositories.component.css"]
 })
-export class RepositoriesComponent {
+export class RepositoriesComponent implements OnInit, OnDestroy {
 
     private _searchText: string;
 
     public repositories: Repository[];
     public loading: boolean = false;
+    private authorizeChangeSubscription: any;
 
-    constructor(private github: GitHub, private router: Router) {
-        console.log("Create RepositoriesComponent");
+    constructor(private github: GitHub, private router: Router, private zone: NgZone, private location: Location) {
+        console.log("Create RepositoriesComponent!");
+    }
+
+    ngOnInit() {
+        this.authorizeChangeSubscription = this.github.authorizedChange.subscribe(next => {
+            if (this.github.authorized && !this.repositories) {
+                this.listOwnRepos();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.authorizeChangeSubscription.unsubscribe();
     }
 
     public get searchText(): string {
@@ -30,6 +43,28 @@ export class RepositoriesComponent {
 
     public onClear() {
         console.log("onClear");
+        this.listOwnRepos();
+    }
+
+    private listOwnRepos() {
+        if (!this.github.authorized) {
+            return;
+        }
+
+        console.log("List own repos!");
+        this.loading = true;
+        this.github.request("user", "repos").then(
+            result => {
+                this.zone.run(() => {
+                    this.repositories = result;
+                    this.loading = false;
+                });
+            },
+            error => {
+                console.log("Error: " + error);
+                this.loading = false;
+            }
+        );
     }
 
     public onSearch(text: string) {
@@ -49,5 +84,9 @@ export class RepositoriesComponent {
         let repo = this.repositories[args.index];
         console.log("Tapped on " + repo.name);
         this.router.navigate(["/repository", encodeURIComponent(repo.owner.login), encodeURIComponent(repo.name) ]);
+    }
+
+    public onAuthenticateTap() {
+        this.github.requestOAuth();
     }
 }

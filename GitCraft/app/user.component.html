@@ -1,0 +1,34 @@
+<ActionBar [title]="github.authenticatedUser.login">
+    <NavigationButton android.systemIcon="ic_menu_back" (tap)="location.back()"></NavigationButton>
+</ActionBar>
+<GridLayout rows="auto, auto, auto, auto, auto, auto, auto, auto, auto, auto" columns="*, *">
+    <Image colSpan="2" class="avatar" [src]="github.authenticatedUser ? github.authenticatedUser.avatar_url : null"></Image>
+
+    <Label row="1" col="0" class="key" text="login"></Label>
+    <Label row="1" col="1" class="value" [text]="github.authenticatedUser.login" textWrap="true"></Label>
+
+    <Label row="2" col="0" class="key" text="name"></Label>
+    <Label row="2" col="1" class="value" [text]="github.authenticatedUser.name" textWrap="true"></Label>
+
+    <Label row="3" col="0" class="key" text="company"></Label>
+    <Label row="3" col="1" class="value" [text]="github.authenticatedUser.company" textWrap="true"></Label>
+
+    <Label row="4" col="0" class="key" text="location"></Label>
+    <Label row="4" col="1" class="value" [text]="github.authenticatedUser.location" textWrap="true"></Label>
+
+    <Label row="5" col="0" class="key" text="email"></Label>
+    <Label row="5" col="1" class="value" [text]="github.authenticatedUser.email" textWrap="true"></Label>
+
+    <Label row="6" col="0" class="key" text="bio"></Label>
+    <Label row="6" col="1" class="value" [text]="github.authenticatedUser.bio" textWrap="true"></Label>
+
+    <Label row="7" col="0" class="key" text="public repos"></Label>
+    <Label row="7" col="1" class="value" [text]="github.authenticatedUser.public_repos" textWrap="true"></Label>
+
+    <Label row="8" col="0" class="key" text="public gists"></Label>
+    <Label row="8" col="1" class="value" [text]="github.authenticatedUser.public_gists" textWrap="true"></Label>
+
+    <Label row="9" col="0" class="key" text="collaborators"></Label>
+    <Label row="9" col="1" class="value" [text]="github.authenticatedUser.collaborators" textWrap="true"></Label>
+
+</GridLayout>

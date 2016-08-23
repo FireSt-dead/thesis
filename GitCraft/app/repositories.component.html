@@ -1,17 +1,21 @@
 <ActionBar>
+    <NavigationButton android.systemIcon="ic_menu_back" (tap)="location.back()"></NavigationButton>
     <ActionBar.titleView>
-        <SearchBar #searchbar row="0" hint="Search" [text]="searchPhrase" (clear)="onClear" (submit)="onSearch(searchbar.text)"></SearchBar>
+        <SearchBar #searchbar row="0" hint="Search" [text]="searchPhrase" (clear)="onClear()" (submit)="onSearch(searchbar.text)"></SearchBar>
     </ActionBar.titleView>
+    <ActionItem text="Sign" (tap)="onAuthenticateTap()" [visibility]="github.authorized ? 'collapsed' : 'visible'"></ActionItem>
 </ActionBar>
-<GridLayout rows="auto, auto, *">
-    <ListView row="2" [items]="repositories" rowHeight="72" (itemTap)="onRepositoryTap($event)">
+<GridLayout>
+    <ListView [items]="repositories" rowHeight="72" (itemTap)="onRepositoryTap($event)">
         <template let-repository="item">
             <GridLayout class="repo" rows="auto, auto" columns="auto, *">
                 <Image class="icon" rowSpan="2" [src]='repository.owner.avatar_url'></Image>
                 <Label class="title" row="0" col="1" [text]='repository.full_name'></Label>
+                <Label class="private" row="0" col="1" text="private" [visibility]="repository.private ? 'visible' : 'collapsed'"></Label>
                 <Label class="status" row="1" col="1" [text]='"★" + repository.watchers + " &#09;⑂" + repository.forks + " &#09;🐛 " + repository.open_issues'></Label>
             </GridLayout>
         </template>
     </ListView>
-    <ActivityIndicator row="2" [busy]="loading"></ActivityIndicator>
+
+    <ActivityIndicator [busy]="loading"></ActivityIndicator>
 </GridLayout>

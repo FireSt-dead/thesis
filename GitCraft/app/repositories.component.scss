@@ -16,12 +16,23 @@ ActivityIndicator {
         background-color: #EEF2F2;
     }
     .title {
-        margin: 16 0 0 0;
+        margin: 16 16 0 0;
         horizontal-align: left;
         vertical-align: top;
         font-size: 16;
         font-weight: 700;
         color: #666666;
+    }
+    .private {
+        margin: 16 16 0 0;
+        padding: 2 6;
+        horizontal-align: right;
+        vertical-align: top;
+        text-align: center;
+        font-size: 10.5;
+        font-weight: 700;
+        border-radius: 6;
+        background-color: #FFEFC6;
     }
     .status {
         margin: 4 0 0 0;

@@ -1,0 +1,35 @@
+.authorization {
+    margin: 16;
+
+    .avatar {
+        width: 94;
+        height: 94;
+        background-color: #EEF2F2;
+        border-color: #AAAAAA;
+        border-radius: 47;
+        border-width: 1;
+        margin: 4;
+    }
+    
+    .authorize-hint {
+        margin: 4;
+    }
+}
+.routes {
+    horizontal-align: center;
+    margin: 16;
+    border-width: 1;
+    border-color: #AAAAAA;
+    border-radius: 6;
+
+    Button {
+        background-color: white;
+        border-radius: 4;
+        horizontal-align: stretch;
+        vertical-align: stretch;
+        padding: 16;
+    }
+    Button:highlighted {
+        background-color: #99AAEE;
+    }
+}

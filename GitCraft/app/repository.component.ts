@@ -8,8 +8,7 @@ import {Location} from '@angular/common';
 @Component({
     selector: "Repository",
     templateUrl: "repository.component.html",
-    styleUrls: ["repository.component.css"],
-    providers: [GitHub]
+    styleUrls: ["repository.component.css"]
 })
 export class RepositoryComponent {
 

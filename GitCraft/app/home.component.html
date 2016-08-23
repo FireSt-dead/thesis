@@ -1,0 +1,15 @@
+<ActionBar title="GitCraft">
+</ActionBar>
+<GridLayout rows="auto, auto, *">
+    <GridLayout class="authorization" rows="auto, auto" (tap)="github.authorized ? router.navigate(['/user']) : github.requestOAuth()">
+        <Image row="0" class="avatar" [src]="github.authenticatedUser ? github.authenticatedUser.avatar_url : null"></Image>
+        <Label row="1" class="authorize-hint" textWrap="true" textAlignment="center"
+            [text]="github.authorized ? (github.authenticatedUser ? 'login: ' + github.authenticatedUser.login + '&#xA;name: ' + (github.authenticatedUser.name || '-') + '&#xA; &#xA; ' : ' &#xA; &#xA; ') : 'Public access only.&#xA;Tap to authorize GitCraft&#xA;to access private repositories'"></Label>
+    </GridLayout>
+    <GridLayout row="1" class="routes" rows="*, *" columns="*, *">
+        <Button row="0" col="0" text="Repos" (tap)="router.navigate(['/repositories'])"></Button>
+        <Button row="0" col="1" text="Orgs"></Button>
+        <Button row="1" col="0" text="User"></Button>
+        <Button row="1" col="1" text="User"></Button>
+    </GridLayout>
+</GridLayout>

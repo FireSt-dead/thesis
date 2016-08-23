@@ -9,7 +9,6 @@ import {Location} from '@angular/common';
     selector: "Milestone",
     templateUrl: "milestone.component.html",
     styleUrls: ["milestone.component.css"],
-    providers: [GitHub],
     pipes: [BackgroundColorPipe, ColorPipe]
 })
 export class MilestoneComponent {

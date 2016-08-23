@@ -1,10 +1,33 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Input, Output, EventEmitter, provide, NgZone } from '@angular/core';
 import { Http, RequestMethod } from '@angular/http';
+import {Headers} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
+import * as utils from "utils/utils";
 
 @Injectable()
 export class GitHub {
-    constructor(private http: Http) {}
+    private static instance: GitHub = null;
+    public static getInstance(http: Http, zone: NgZone): GitHub {
+        if (GitHub.instance === null) {
+            GitHub.instance = new GitHub(http, zone);
+        }
+        return GitHub.instance;
+    }
+
+    private static access_token: string;
+    private static id: number = 0;
+    private id: number;
+
+    public authenticatedUser: User;
+
+    constructor(private http: Http, public zone: NgZone) {
+        this.id = GitHub.id ++;
+        console.log("New GitHub instance! " + this.id);
+    }
+
+    @Output() authorizedChange = new EventEmitter();
+
+    public get authorized(): boolean { return !!GitHub.access_token; }
 
     /**
      * Get the repositories for an organization by name.
@@ -29,6 +52,13 @@ export class GitHub {
      */
     request(repos: "repos", owner: string, repo: string, milestones: "milestones", querry?: MilestonesQuery): Promise<Milestone[]>;
 
+    request(user: "user", repos: "repos", UserReposQuery): Promise<Repository[]>;
+
+    /**
+     * Get the authenticated user details.
+     */
+    request(user: "user"): Promise<User>;    
+
     request(repos: "repos", owner: string, repo: string, issues: "issues", query?: IssuesQuery): Promise<Issue[]>;
 
     request(... args: any[]): any;
@@ -37,12 +67,16 @@ export class GitHub {
         querryUri += args.filter(s => typeof s === "string").join("/");
         let last = args[args.length - 1];
         let params = typeof last === "object" ? last : undefined;
-        if (params) {
+        if (params || GitHub.access_token) {
             querryUri += "?";
             let separate = false;
             for(let key in params) {
                 // TODO: Url escape
                 querryUri += (separate ? "&" : "") + key + "=" + params[key];
+                separate = true;
+            }
+            if (GitHub.access_token) {
+                querryUri += (separate ? "&" : "") + "access_token" + "=" + GitHub.access_token;
                 separate = true;
             }
         }
@@ -51,7 +85,64 @@ export class GitHub {
             .toPromise()
             .then(response => Promise.resolve(response.json()));
     }
+
+    requestOAuth() {
+        // TODO: Create **state** and store it for safe keeping untill exchangeForAccessToken is called.
+        utils.openUrl("https://github.com/login/oauth/authorize?client_id=ddad3314e37c5efbf57f&allow_signup=true&scope=repo,user");
+    }
+
+    exchangeForAccessToken(params: { code: string, state: string }) {
+        console.log("exchangeForAccessToken: " + params.code + " " + this.id);
+        // TODO: Verify **state**
+        console.log("exchangeForAccessToken " + params.code + " " + params.state);
+        let url = "https://github.com/login/oauth/access_token";
+        url += "?client_id=ddad3314e37c5efbf57f";
+        url += "&client_secret=304bc86ebc19fa0de7dcdbf8bb9afdbbad45d639";
+        url += "&code=" + params.code;
+
+        this.http.post(url, "", {
+            headers: new Headers({ Accept: "application/json" })
+        }).toPromise().then(result => {
+            // TODO: What if result.status !== 200
+            console.log("Result from OAuth:");
+            console.log(result.status);
+            let resultJson: {
+                access_token: string,
+                token_type:"bearer",
+                scope: string,
+            } = result.json();
+            console.log("result " + this.id + " " + JSON.stringify(resultJson));
+
+            // TODO: Revoke existing tokens and persist the access_token for later use (even after app restart)...
+            this.zone.run(() => {
+                GitHub.access_token = resultJson.access_token;
+                this.authorizedChange.emit({});
+                console.log("in NgZone " + this.zone);
+
+                this.requestUser();
+            });
+        }).catch(error => {
+            console.log("OAuth error: " + error);
+        });
+    }
+
+    private requestUser() {
+        this.request("user").then(user => {
+            this.zone.run(() => {
+                this.authenticatedUser = user;
+            });
+        })
+    }
 }
+
+export const GITHUB_SERVICE_PROVIDER = [
+    provide(GitHub, {
+        deps: [Http, NgZone],
+        useFactory: (http: Http, zone: NgZone): GitHub => {
+            return GitHub.getInstance(http, zone);
+        }
+    })
+];
 
 export interface Organization {
     name: string;
@@ -63,7 +154,7 @@ export interface Repository {
     forks: number;
     open_issues: number;
     watchers: number;
-
+    private: boolean;
     owner: Owner;
 }
 
@@ -174,4 +265,24 @@ export interface Issue {
 export interface Label {
     name: string;
     color: string;
+}
+
+export interface UserReposQuery {
+    visibility?: "all" | "public" | "private";
+    
+    /**
+     * Comma-separated list of values.
+     * Default: "owner,collaborator,organization_member".
+     */
+    affiliation?: "owner" | "collaborator" | "organization_member" | string;
+    type: "all" | "owner" | "public" | "private" | "member";
+    sort: "created" | "updated" | "pushed" | "full_name";
+    direction: "asc" | "desc";
+}
+
+export interface User extends Owner {
+    location: string;
+    email: string;
+    bio: string;
+    name: string;
 }
