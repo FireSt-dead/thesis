@@ -19,6 +19,14 @@ export class MilestoneComponent {
 
     issues: Issue[];
 
+    milestone: Milestone;
+
+    openIssues: Issue[];
+    closedIssues: Issue[];
+
+    // Only if authorized...
+    myIssues: Issue[];
+
     constructor(private github: GitHub, private router: Router, private route: ActivatedRoute, private location: Location) {
         console.log("Create MilestoneComponent");
     }
@@ -31,9 +39,30 @@ export class MilestoneComponent {
                 this.owner = params.owner;
                 this.name = params.name;
                 this.number = parseInt(params.id);
+
+                this.github.request("repos", this.owner, this.name, "milestones", this.number).then(milestone => {
+                    this.milestone = milestone;
+                });
+                
                 this.github.request("repos", params.owner, params.name, "issues", { milestone: params.id, state: "all" }).then(
-                    result => {
+                    (result: Issue[]) => {
                         this.issues = result;
+                        this.openIssues = result.filter(issue => issue.state === "open");
+                        this.closedIssues = result.filter(issue => issue.state === "closed");
+
+                        console.log(this.github);
+                        console.log(this.github.authenticatedUser);
+                        console.log(this.github.authenticatedUser.login);
+
+                        if (this.github.authenticatedUser) {
+                            console.log("Search for " + this.github.authenticatedUser.login);
+                            this.myIssues = result.filter(issue => issue.assignees && issue.assignees.some(asignee => {
+                                console.log(" - " + asignee.login);
+                                return asignee.login === this.github.authenticatedUser.login;
+                            }));
+                        } else {
+                            this.myIssues = null;
+                        }
                     }
                 );
             });

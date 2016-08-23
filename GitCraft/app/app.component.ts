@@ -10,6 +10,8 @@ import {UserComponent} from "./user.component";
 import {RepositoriesComponent} from "./repositories.component";
 import {RepositoryComponent} from "./repository.component";
 import {MilestoneComponent} from "./milestone.component";
+import {NotificationsComponent} from "./notifications.component";
+
 import {GitHub, Repository, Organization, Milestone } from "./github.service";
 
 
@@ -61,7 +63,8 @@ export const APP_ROUTES: RouterConfig = [
     { path: "user", component: UserComponent},
     { path: "repositories", component: RepositoriesComponent },
     { path: "repository/:owner/:name", component: RepositoryComponent },
-    { path: "milestone/:owner/:name/:milestone", component: MilestoneComponent }
+    { path: "milestone/:owner/:name/:milestone", component: MilestoneComponent },
+    { path: "notifications", component: NotificationsComponent }
 ];
 
 export const APP_ROUTER_PROVIDERS = nsProvideRouter(

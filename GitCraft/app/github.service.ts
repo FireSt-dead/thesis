@@ -57,7 +57,9 @@ export class GitHub {
     /**
      * Get the authenticated user details.
      */
-    request(user: "user"): Promise<User>;    
+    request(user: "user"): Promise<User>;
+
+    request(notifications: "notifications"): Promise<Notification[]>;
 
     request(repos: "repos", owner: string, repo: string, issues: "issues", query?: IssuesQuery): Promise<Issue[]>;
 
@@ -251,8 +253,8 @@ export interface Issue {
     labels: Label[];
     state: "open" | "closed";
     locked: boolean;
-    asignee: Owner;
-    asignees: Owner[];
+    assignee: Owner;
+    assignees: Owner[];
     milestone: Milestone;
     comments: number;
 
@@ -285,4 +287,26 @@ export interface User extends Owner {
     email: string;
     bio: string;
     name: string;
+}
+
+export interface Notification {
+    id: string;
+    repository: {
+        id: string;
+        name: string;
+        full_name: string;
+        description: string;
+        private: boolean;
+    };
+    subject: {
+        title: string;
+        url: string;
+        type: "Issue"
+    };
+    unread: boolean;
+
+    updated_at: string;
+    last_read_at: string;
+
+    reason: "subscribed" | "manual" | "author" | "mention" | "team_mention" | "state_change" | "assign";
 }

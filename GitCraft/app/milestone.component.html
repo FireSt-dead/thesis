@@ -1,20 +1,46 @@
-<ActionBar title="Milestone">
+<ActionBar [title]="milestone ? milestone.title : ''">
     <NavigationButton android.systemIcon="ic_menu_back" (tap)="goBack()"></NavigationButton>
 </ActionBar>
 <GridLayout>
-    <ListView row="2" [items]="issues" rowHeight="72">
-        <template let-issue="item">
-            <GridLayout class="issue" rows="auto, 24, *" columns="*, auto">
-               <Label class="title" [text]="issue.title"></Label>
-               <StackLayout class="labels" row="1" orientation="horizontal">
-                   <Label class="label" *ngFor="let label of issue.labels" [text]="label.name" [color]="label.color | color" [backgroundColor]="label.color | backgroundColor"></Label>
-               </StackLayout>
-               <StackLayout class="asignees" rowSpan="3" col="1" orientation="horizontal">
-                   <!-- Works initially but fails after recycing: [index]="i" -->
-                   <!-- Best case would be to use css pseudo-class :first -->
-                   <Image class="assignee" *ngFor="let assignee of issue.assignees; let i = index" [class.first]="i === 0" [src]="assignee.avatar_url" [style.zIndex]="-i"></Image>
-               </StackLayout>
-            </GridLayout>
-        </template>
-    </ListView>
+    <TabView>
+        <ListView *tabItem="{title: 'Open'}" row="2" [items]="openIssues" rowHeight="72">
+            <template let-issue="item">
+                <GridLayout class="issue" rows="auto, 24, *" columns="*, auto">
+                <Label class="title" [text]="issue.title"></Label>
+                <StackLayout class="labels" row="1" orientation="horizontal">
+                    <Label class="label" *ngFor="let label of issue.labels" [text]="label.name" [color]="label.color | color" [backgroundColor]="label.color | backgroundColor"></Label>
+                </StackLayout>
+                <StackLayout class="asignees" rowSpan="3" col="1" orientation="horizontal">
+                    <Image class="assignee" *ngFor="let assignee of issue.assignees; let i = index" [class.first]="i === 0" [src]="assignee.avatar_url" [style.zIndex]="-i"></Image>
+                </StackLayout>
+                </GridLayout>
+            </template>
+        </ListView>
+        <ListView *tabItem="{title: 'Closed'}" row="2" [items]="closedIssues" rowHeight="72">
+            <template let-issue="item">
+                <GridLayout class="issue" rows="auto, 24, *" columns="*, auto">
+                <Label class="title" [text]="issue.title"></Label>
+                <StackLayout class="labels" row="1" orientation="horizontal">
+                    <Label class="label" *ngFor="let label of issue.labels" [text]="label.name" [color]="label.color | color" [backgroundColor]="label.color | backgroundColor"></Label>
+                </StackLayout>
+                <StackLayout class="asignees" rowSpan="3" col="1" orientation="horizontal">
+                    <Image class="assignee" *ngFor="let assignee of issue.assignees; let i = index" [class.first]="i === 0" [src]="assignee.avatar_url" [style.zIndex]="-i"></Image>
+                </StackLayout>
+                </GridLayout>
+            </template>
+        </ListView>
+        <ListView *tabItem="{title: 'My'}" row="2" [items]="myIssues" rowHeight="72">
+            <template let-issue="item">
+                <GridLayout class="issue" rows="auto, 24, *" columns="*, auto">
+                <Label class="title" [text]="issue.title"></Label>
+                <StackLayout class="labels" row="1" orientation="horizontal">
+                    <Label class="label" *ngFor="let label of issue.labels" [text]="label.name" [color]="label.color | color" [backgroundColor]="label.color | backgroundColor"></Label>
+                </StackLayout>
+                <StackLayout class="asignees" rowSpan="3" col="1" orientation="horizontal">
+                    <Image class="assignee" *ngFor="let assignee of issue.assignees; let i = index" [class.first]="i === 0" [src]="assignee.avatar_url" [style.zIndex]="-i"></Image>
+                </StackLayout>
+                </GridLayout>
+            </template>
+        </ListView>
+    </TabView>
 </GridLayout>

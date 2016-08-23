@@ -1,0 +1,17 @@
+<ActionBar title="Notifications">
+    <NavigationButton android.systemIcon="ic_menu_back" (tap)="location.back()"></NavigationButton>
+</ActionBar>
+<GridLayout>
+    <ListView [items]="notifications" rowHeight="72">
+        <template let-notification="item">
+            <StackLayout>
+                <Label [text]="notification.subject.title"></Label>
+                <Label [text]="notification.subject.type"></Label>
+                <Label [text]="notification.reason"></Label>
+                <Label [text]="notification.unread"></Label>
+            </StackLayout>
+        </template>
+    </ListView>
+
+    <ActivityIndicator [busy]="loading"></ActivityIndicator>
+</GridLayout>

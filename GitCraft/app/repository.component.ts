@@ -16,6 +16,8 @@ export class RepositoryComponent {
     name: string;
 
     milestones: Milestone[];
+    openMilestones: Milestone[];
+    closedMilestones: Milestone[];
 
     constructor(private github: GitHub, private router: Router, private route: ActivatedRoute, private location: Location) {
         console.log("Create RepositoriesComponent");
@@ -34,7 +36,11 @@ export class RepositoryComponent {
                         console.log("github request repos: " + result + " " + result.full_name);
                     }
                 );
-                this.github.request("repos", params.owner, params.name, "milestones", { state: "all" }).then(result => this.milestones = result);
+                this.github.request("repos", params.owner, params.name, "milestones", { state: "all" }).then(result => {
+                    this.milestones = result;
+                    this.openMilestones = result.filter(milestone => milestone.state === "open");
+                    this.closedMilestones = result.filter(milestone => milestone.state === "closed");
+                });
             });
     }
 
@@ -44,6 +50,18 @@ export class RepositoryComponent {
 
     public onMilestoneTap(args: ItemEventData) {
         let milestone = this.milestones[args.index];
+        console.log("Tapped on " + milestone.title);
+        this.router.navigate(["/milestone", encodeURIComponent(this.owner), encodeURIComponent(this.name), encodeURIComponent(milestone.number.toString()) ]);
+    }
+
+    public onOpenMilestoneTap(args: ItemEventData) {
+        let milestone = this.openMilestones[args.index];
+        console.log("Tapped on " + milestone.title);
+        this.router.navigate(["/milestone", encodeURIComponent(this.owner), encodeURIComponent(this.name), encodeURIComponent(milestone.number.toString()) ]);
+    }
+
+    public onClosedMilestoneTap(args: ItemEventData) {
+        let milestone = this.closedMilestones[args.index];
         console.log("Tapped on " + milestone.title);
         this.router.navigate(["/milestone", encodeURIComponent(this.owner), encodeURIComponent(this.name), encodeURIComponent(milestone.number.toString()) ]);
     }
