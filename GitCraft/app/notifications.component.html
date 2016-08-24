@@ -2,16 +2,15 @@
     <NavigationButton android.systemIcon="ic_menu_back" (tap)="location.back()"></NavigationButton>
 </ActionBar>
 <GridLayout>
-    <ListView [items]="notifications" rowHeight="72">
+    <ListView [items]="notifications" (itemTap)="onNotificationTap($event)">
         <template let-notification="item">
-            <StackLayout>
-                <Label [text]="notification.subject.title"></Label>
-                <Label [text]="notification.subject.type"></Label>
-                <Label [text]="notification.reason"></Label>
-                <Label [text]="notification.unread"></Label>
-            </StackLayout>
+            <GridLayout class="notification" rows="auto, auto, auto" columns="auto, *">
+                <Image class="icon" rowSpan="3" [src]="notification.repository ? notification.repository.owner.avatar_url : null"></Image> 
+                <Label row="0" col="1" [ngClass]="notification.unread ? 'title' : 'title unread'" [text]="notification.subject.title" textWrap="true"></Label>
+                <Label row="1" col="1" class="repo" [visibility]="notification.repository ? 'visible' : 'collapsed'" [text]="notification.repository ? notification.repository.full_name : ''"></Label>
+                <Label row="2" col="1" class="status" [text]="notification.subject.type + ', ' + notification.reason + (notification.unread ? ', unread' : '')"></Label>
+            </GridLayout>
         </template>
     </ListView>
-
     <ActivityIndicator [busy]="loading"></ActivityIndicator>
 </GridLayout>

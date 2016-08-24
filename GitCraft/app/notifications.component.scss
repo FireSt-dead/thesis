@@ -5,6 +5,39 @@ ActivityIndicator {
     height: 40;
 }
 
-.title {
+.notification {
+    .icon {
+        width: 40;
+        height: 40;
+        margin: 16 16 16 22;
+        vertical-align: top;
+        horizontal-align: left;
+        border-radius: 6;
+        background-color: #EEF2F2;
+    }
 
+    .title {
+        color: #666666;
+        font-size: 16;
+        margin: 16 16 2 0;
+        text-align: left;
+        horizontal-align: left;
+    }
+
+    .unread {
+        font-weight: 700;
+        color: #333333;
+    }
+
+    .repo {
+        margin: 2 16 2 0;
+        text-align: left;
+        horizontal-align: left;
+    }
+
+    .status {
+        margin: 2 16 16 0;
+        text-align: left;
+        horizontal-align: left;
+    }
 }

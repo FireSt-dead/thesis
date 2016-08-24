@@ -11,6 +11,7 @@ import {RepositoriesComponent} from "./repositories.component";
 import {RepositoryComponent} from "./repository.component";
 import {MilestoneComponent} from "./milestone.component";
 import {NotificationsComponent} from "./notifications.component";
+import {IssueComponent} from "./issue.component";
 
 import {GitHub, Repository, Organization, Milestone } from "./github.service";
 
@@ -61,8 +62,9 @@ export class AppComponent implements OnDestroy {
 export const APP_ROUTES: RouterConfig = [
     { path: "", component: HomeComponent},
     { path: "user", component: UserComponent},
-    { path: "repositories", component: RepositoriesComponent },
-    { path: "repository/:owner/:name", component: RepositoryComponent },
+    { path: "repos", component: RepositoriesComponent },
+    { path: "repos/:owner/:name", component: RepositoryComponent },
+    { path: "repos/:owner/:name/issues/:issue", component: IssueComponent },
     { path: "milestone/:owner/:name/:milestone", component: MilestoneComponent },
     { path: "notifications", component: NotificationsComponent }
 ];

@@ -5,6 +5,8 @@ import {Router, ActivatedRoute} from "@angular/router";
 import {BackgroundColorPipe, ColorPipe} from "./github.color.pipe";
 import {Location} from '@angular/common';
 
+const apigithubPrefix = "https://api.github.com/";
+
 @Component({
     selector: "Notifications",
     templateUrl: "notifications.component.html",
@@ -19,11 +21,21 @@ export class NotificationsComponent {
         console.log("Create NotificationsComponent");
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         this.github.request("notifications").then(result => {
-            // console.log("Result: " + JSON.stringify(result));
             this.notifications = result;
             this.loading = false;
         });
+    }
+
+    public onNotificationTap(args: ItemEventData) {
+        let notification = this.notifications[args.index];
+        console.log("Tapped on " + notification.subject.title);
+        let url = notification.subject.url;
+        if (url.substr(0, apigithubPrefix.length) === apigithubPrefix) {
+            let urlTail = url.substr(apigithubPrefix.length).split("/");
+            console.log("Navigate: [" + urlTail.join(", ") + "]");
+            this.router.navigate(urlTail);
+        }
     }
 }

@@ -1,19 +1,20 @@
 .issue {
+    margin: 16;
+
     .title {
-        margin: 16 4 0 16;
-        horizontal-align: left;
-        vertical-align: top;
-        font-size: 16;
-        font-weight: 700;
         color: #666666;
+        font-size: 16;
+        margin: 16 16 2 0;
+        text-align: left;
+        horizontal-align: left;
     }
     .labels {
         horizontal-align: left;
         vertical-align: top;
-        margin: 0 4 0 14;
+        margin: 4 0;
 
         .label {
-            margin: 2;
+            margin: 0 4 0 0;
             padding: 2 6;
             text-align: center;
             font-size: 10.5;
@@ -21,8 +22,26 @@
             border-radius: 6;
         }
     }
+
+    .body {
+        margin: 16 0;
+    }
+    .comments {
+        margin: 8 0;
+    }
+
+    .comment {
+        margin: 16 0;
+        .avatar {
+            width: 40;
+            height: 40;
+            border-radius: 20;
+            background-color: #EEF2F2;
+        }
+    }
+
     .asignees {
-        horizontal-align: right;
+        horizontal-align: left;
         vertical-align: top;
         margin: 16 16 16 4;
 

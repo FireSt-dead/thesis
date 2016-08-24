@@ -62,6 +62,8 @@ export class GitHub {
     request(notifications: "notifications"): Promise<Notification[]>;
 
     request(repos: "repos", owner: string, repo: string, issues: "issues", query?: IssuesQuery): Promise<Issue[]>;
+    request(repos: "repos", owner: string, repo: string, issues: "issues", number: string): Promise<Issue>;
+    request(repos: "repos", owner: string, repo: string, issues: "issues", number: string, comments: "comments"): Promise<Comment[]>;
 
     request(... args: any[]): any;
     request(... args: (string | {})[]): any {
@@ -83,7 +85,10 @@ export class GitHub {
             }
         }
         console.log("Querry: " + querryUri);
-        return this.http.get(querryUri)
+        return this.http.get(querryUri, {
+                // Enables experimental reactions.
+                headers: new Headers({ Accept: "application/vnd.github.squirrel-girl-preview" })
+            })
             .toPromise()
             .then(response => Promise.resolve(response.json()));
     }
@@ -262,6 +267,17 @@ export interface Issue {
     updated_at: string;
     closed_at: string;
     body: string;
+
+    reactions?: {
+        url: string;
+        total_count: number;
+        "+1": number;
+        "-1": number;
+        laugh: number;
+        hooray: number;
+        confused: number;
+        heart: number;
+    }
 }
 
 export interface Label {
@@ -309,4 +325,16 @@ export interface Notification {
     last_read_at: string;
 
     reason: "subscribed" | "manual" | "author" | "mention" | "team_mention" | "state_change" | "assign";
+}
+
+export interface Comment {
+    id: number;
+    user: {
+        login: string;
+        id: number;
+        avatar_url: string;
+    };
+    created_at: string;
+    updated_at: string;
+    body: string;
 }

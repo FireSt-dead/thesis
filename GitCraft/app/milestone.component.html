@@ -3,7 +3,7 @@
 </ActionBar>
 <GridLayout>
     <TabView>
-        <ListView *tabItem="{title: 'Open'}" row="2" [items]="openIssues" rowHeight="72">
+        <ListView *tabItem="{title: 'Open'}" row="2" [items]="openIssues" rowHeight="72" (itemTap)="onOpenIssueTap($event)">
             <template let-issue="item">
                 <GridLayout class="issue" rows="auto, 24, *" columns="*, auto">
                 <Label class="title" [text]="issue.title"></Label>
@@ -16,7 +16,7 @@
                 </GridLayout>
             </template>
         </ListView>
-        <ListView *tabItem="{title: 'Closed'}" row="2" [items]="closedIssues" rowHeight="72">
+        <ListView *tabItem="{title: 'Closed'}" row="2" [items]="closedIssues" rowHeight="72" (itemTap)="onClosedIssueTap($event)">
             <template let-issue="item">
                 <GridLayout class="issue" rows="auto, 24, *" columns="*, auto">
                 <Label class="title" [text]="issue.title"></Label>
@@ -29,7 +29,7 @@
                 </GridLayout>
             </template>
         </ListView>
-        <ListView *tabItem="{title: 'My'}" row="2" [items]="myIssues" rowHeight="72">
+        <ListView *tabItem="{title: 'My'}" row="2" [items]="myIssues" rowHeight="72" (itemTap)="onMyIssueTap($event)">
             <template let-issue="item">
                 <GridLayout class="issue" rows="auto, 24, *" columns="*, auto">
                 <Label class="title" [text]="issue.title"></Label>

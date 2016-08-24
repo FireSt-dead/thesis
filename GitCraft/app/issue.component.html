@@ -1,0 +1,33 @@
+<ActionBar [title]="github.authenticatedUser.login">
+    <NavigationButton android.systemIcon="ic_menu_back" (tap)="location.back()"></NavigationButton>
+</ActionBar>
+<ScrollView>
+    <GridLayout>
+        <StackLayout class="issue" [visibility]="issue ? 'visible' : 'collapsed'">
+            <Label class="title" [text]="issue && issue.title" textWrap="wrap"></Label>
+            <Label class="number" [text]="issue && ('#' + issue.number)"></Label>
+            <Label class="state" [text]="issue && issue.state"></Label>
+            <GridLayout columns="auto, *">
+                <Label col="1" class="created" [text]="issue && (issue.user.login + ' opened this issue on ' + issue.created_at)" textWrap="true"></Label>
+            </GridLayout>
+            <StackLayout class="asignees" rowSpan="3" col="1" orientation="horizontal">
+                <Image class="assignee" *ngFor="let assignee of (issue && issue.assignees || []); let i = index" [class.first]="i === 0" [src]="assignee.avatar_url" [style.zIndex]="-i"></Image>
+            </StackLayout>
+            <StackLayout class="labels" row="1" orientation="horizontal">
+                <Label class="label" *ngFor="let label of (issue && issue.labels || [])" [text]="label.name" [color]="label.color | color" [backgroundColor]="label.color | backgroundColor"></Label>
+            </StackLayout>
+            <!-- TODO: Milestone, assignees, participants, notifications, lock conversation... -->
+            <!-- TODO: Edit labels. -->
+            <!-- TODO: Use html view and convert GitHub markdown to html... -->
+            <Label class="body" [text]="issue && (issue.body)" textWrap="wrap"></Label>
+            <Label [text]="issue && (issue.comments + ' comments')"></Label>
+
+            <GridLayout class="comment" *ngFor="let comment of comments" rows="auto, auto" columns="auto, *">
+                <Image class="avatar" [src]="comment.user.avatar_url"></Image>
+                <Label col="1" [text]="comment.user.login"></Label>
+                <!-- TODO: html view with GitHub markdown -->
+                <Label row="1" colSpan="2" [text]="comment.body" textWrap="true"></Label>
+            </GridLayout>
+        </StackLayout>
+    </GridLayout>
+</ScrollView>

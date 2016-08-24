@@ -83,7 +83,7 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
     public onRepositoryTap(args: ItemEventData) {
         let repo = this.repositories[args.index];
         console.log("Tapped on " + repo.name);
-        this.router.navigate(["/repository", encodeURIComponent(repo.owner.login), encodeURIComponent(repo.name) ]);
+        this.router.navigate(["/repos", encodeURIComponent(repo.owner.login), encodeURIComponent(repo.name) ]);
     }
 
     public onAuthenticateTap() {

@@ -71,4 +71,20 @@ export class MilestoneComponent {
     goBack() {
         this.location.back();
     }
+
+    onOpenIssueTap(args) {
+        this.onIssueTap(this.openIssues[args.index]);
+    }
+
+    onClosedIssueTap(args) {
+        this.onIssueTap(this.closedIssues[args.index]);
+    }
+
+    onMyIssueTap(args) {
+        this.onIssueTap(this.myIssues[args.index]);
+    }
+
+    onIssueTap(issue: Issue) {
+        this.router.navigate(["/repos", encodeURIComponent(this.owner), encodeURIComponent(this.name), "issues", issue.number]);
+    }
 }
