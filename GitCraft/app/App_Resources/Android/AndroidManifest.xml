@@ -34,8 +34,11 @@
 			<meta-data android:name="SET_THEME_ON_LAUNCH" android:resource="@style/AppTheme" />
 
 			<intent-filter>
-				<data android:scheme="gitcraft" />
 				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<intent-filter>
+				<data android:scheme="gitcraft" />
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.LAUNCHER" />
 				<category android:name="android.intent.category.DEFAULT" />
