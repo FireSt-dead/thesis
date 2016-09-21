@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy, NgZone} from "@angular/core";
-import {GitHub, Repository, Organization} from "./github.service";
+import {GitHubService, Repository, Organization} from "./github.service";
 import {ItemEventData} from "ui/list-view";
 import {Router} from "@angular/router";
 import {Location} from '@angular/common';
@@ -17,7 +17,7 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
     public loading: boolean = false;
     private authorizeChangeSubscription: any;
 
-    constructor(private github: GitHub, private router: Router, private zone: NgZone, private location: Location) {
+    constructor(private github: GitHubService, private router: Router, private zone: NgZone, private location: Location) {
         console.log("Create RepositoriesComponent!");
     }
 

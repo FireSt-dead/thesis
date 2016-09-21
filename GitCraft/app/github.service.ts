@@ -1,18 +1,11 @@
-import { Injectable, Input, Output, EventEmitter, provide, NgZone } from '@angular/core';
+import { Injectable, Input, Output, EventEmitter, NgZone } from '@angular/core';
 import { Http, RequestMethod } from '@angular/http';
 import {Headers} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as utils from "utils/utils";
 
 @Injectable()
-export class GitHub {
-    private static instance: GitHub = null;
-    public static getInstance(http: Http, zone: NgZone): GitHub {
-        if (GitHub.instance === null) {
-            GitHub.instance = new GitHub(http, zone);
-        }
-        return GitHub.instance;
-    }
+export class GitHubService {
 
     private static access_token: string;
     private static id: number = 0;
@@ -21,13 +14,13 @@ export class GitHub {
     public authenticatedUser: User;
 
     constructor(private http: Http, public zone: NgZone) {
-        this.id = GitHub.id ++;
+        this.id = GitHubService.id ++;
         console.log("New GitHub instance! " + this.id);
     }
 
     @Output() authorizedChange = new EventEmitter();
 
-    public get authorized(): boolean { return !!GitHub.access_token; }
+    public get authorized(): boolean { return !!GitHubService.access_token; }
 
     /**
      * Get the repositories for an organization by name.
@@ -71,7 +64,7 @@ export class GitHub {
         querryUri += args.filter(s => typeof s === "string").join("/");
         let last = args[args.length - 1];
         let params = typeof last === "object" ? last : undefined;
-        if (params || GitHub.access_token) {
+        if (params || GitHubService.access_token) {
             querryUri += "?";
             let separate = false;
             for(let key in params) {
@@ -79,8 +72,8 @@ export class GitHub {
                 querryUri += (separate ? "&" : "") + key + "=" + params[key];
                 separate = true;
             }
-            if (GitHub.access_token) {
-                querryUri += (separate ? "&" : "") + "access_token" + "=" + GitHub.access_token;
+            if (GitHubService.access_token) {
+                querryUri += (separate ? "&" : "") + "access_token" + "=" + GitHubService.access_token;
                 separate = true;
             }
         }
@@ -122,7 +115,7 @@ export class GitHub {
 
             // TODO: Revoke existing tokens and persist the access_token for later use (even after app restart)...
             this.zone.run(() => {
-                GitHub.access_token = resultJson.access_token;
+                GitHubService.access_token = resultJson.access_token;
                 this.authorizedChange.emit({});
                 console.log("in NgZone " + this.zone);
 
@@ -141,15 +134,6 @@ export class GitHub {
         })
     }
 }
-
-export const GITHUB_SERVICE_PROVIDER = [
-    provide(GitHub, {
-        deps: [Http, NgZone],
-        useFactory: (http: Http, zone: NgZone): GitHub => {
-            return GitHub.getInstance(http, zone);
-        }
-    })
-];
 
 export interface Organization {
     name: string;
