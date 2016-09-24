@@ -17,13 +17,30 @@ import {MilestoneComponent} from "./milestone.component";
 import {NotificationsComponent} from "./notifications.component";
 import {IssueComponent} from "./issue.component";
 
+import {GitHubService} from "./github.service";
+
+import * as application from  "application";
+import { isAndroid, isIOS } from "platform";
+
+if (isIOS) {
+    class AppDelegate extends NSObject implements UIApplicationDelegate {
+        static ObjCProtocols = [UIApplicationDelegate];
+        applicationHandleOpenURL(app, url): boolean {
+            return GitHubService.applicationHandleOpenURL(application, url);
+        }
+    }
+    application.ios.delegate = AppDelegate;
+} else if (isAndroid) {
+    GitHubService.registerForURLIntent();
+}
+
 @NgModule({
     declarations: [
         BackgroundColorPipe,
         ColorPipe,
-        
+
         AppComponent,
-        
+
         HomeComponent,
         UserComponent,
         RepositoriesComponent,
@@ -49,5 +66,7 @@ import {IssueComponent} from "./issue.component";
     ]
 })
 class AppComponentModule { }
+
+
 
 platformNativeScriptDynamic().bootstrapModule(AppComponentModule);

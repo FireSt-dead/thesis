@@ -4,18 +4,22 @@ import {Headers} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as utils from "utils/utils";
 
+import * as application from "application";
+
 @Injectable()
 export class GitHubService {
 
     private static access_token: string;
-    private static id: number = 0;
-    private id: number;
+    private static instance: GitHubService;
 
     public authenticatedUser: User;
 
     constructor(private http: Http, public zone: NgZone) {
-        this.id = GitHubService.id ++;
-        console.log("New GitHub instance! " + this.id);
+        console.log("New GitHub instance!");
+        if (GitHubService.instance) {
+            throw "GitHubService can be instantiated only once.";
+        }
+        GitHubService.instance = this;
     }
 
     @Output() authorizedChange = new EventEmitter();
@@ -91,8 +95,56 @@ export class GitHubService {
         utils.openUrl("https://github.com/login/oauth/authorize?client_id=ddad3314e37c5efbf57f&allow_signup=true&scope=repo,user");
     }
 
+    /**
+     * iOS scheme URL entry point.
+     */
+    public static registerForURLIntent() {
+        let handler = args => {
+            console.log("activityResumed!");
+            let intent = args.activity.getIntent();
+            let data = intent.getData();
+            if (data) {
+                let scheme = data.getScheme();
+                let host = data.getHost();
+                if (scheme === "gitcraft" && host === "oauth-cb") {
+                    let code = data.getQueryParameter("code");
+                    let state = data.getQueryParameter("state");
+                    GitHubService.exchangeForAccessToken({ code, state });
+                }
+            }
+        };
+        application.android.on("activityResumed", handler);
+    }
+
+    /**
+     * Android scheme URL entry point.
+     */
+    public static applicationHandleOpenURL(application, url) {
+        let urlComponents = NSURLComponents.componentsWithURLResolvingAgainstBaseURL(url, false);
+        let items = urlComponents.queryItems;
+
+        let code: string = null;
+        let state: string = null;
+        console.log("Items: " + items);
+        items.enumerateObjectsUsingBlock(item => {
+            console.log("   query params: " + item);
+            if (item.name == "code" && !code) {
+                code = item.value;
+            } else if (item.name == "state" && !state) {
+                state = item.value;
+            }
+        });
+
+        GitHubService.exchangeForAccessToken({ code, state });
+        return true;
+    }
+
+    static exchangeForAccessToken(params: { code: string, state: string }) {
+        GitHubService.instance.exchangeForAccessToken(params);
+    }
+
     exchangeForAccessToken(params: { code: string, state: string }) {
-        console.log("exchangeForAccessToken: " + params.code + " " + this.id);
+        console.log("exchangeForAccessToken: " + params.code + " " + params.state);
         // TODO: Verify **state**
         console.log("exchangeForAccessToken " + params.code + " " + params.state);
         let url = "https://github.com/login/oauth/access_token";
@@ -111,7 +163,7 @@ export class GitHubService {
                 token_type:"bearer",
                 scope: string,
             } = result.json();
-            console.log("result " + this.id + " " + JSON.stringify(resultJson));
+            console.log("result " + JSON.stringify(resultJson));
 
             // TODO: Revoke existing tokens and persist the access_token for later use (even after app restart)...
             this.zone.run(() => {
