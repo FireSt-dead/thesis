@@ -1,33 +1,33 @@
-import { Injectable, Input, Output, EventEmitter, provide, NgZone } from '@angular/core';
+import { Injectable, Input, Output, EventEmitter, NgZone } from '@angular/core';
 import { Http, RequestMethod } from '@angular/http';
 import {Headers} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as utils from "utils/utils";
 
+import * as application from "application";
+
 @Injectable()
-export class GitHub {
-    private static instance: GitHub = null;
-    public static getInstance(http: Http, zone: NgZone): GitHub {
-        if (GitHub.instance === null) {
-            GitHub.instance = new GitHub(http, zone);
-        }
-        return GitHub.instance;
-    }
+export class GitHubService {
 
     private static access_token: string;
-    private static id: number = 0;
-    private id: number;
+    private static instance: GitHubService;
 
     public authenticatedUser: User;
 
     constructor(private http: Http, public zone: NgZone) {
-        this.id = GitHub.id ++;
-        console.log("New GitHub instance! " + this.id);
+        console.log("New GitHub instance!");
+        if (GitHubService.instance) {
+            console.log("GitHubService can be instantiated only once.");
+            return GitHubService.instance;
+        }
+        GitHubService.instance = this;
+
+        // TODO: restoreToken and request user on success...
     }
 
     @Output() authorizedChange = new EventEmitter();
 
-    public get authorized(): boolean { return !!GitHub.access_token; }
+    public get authorized(): boolean { return !!GitHubService.access_token; }
 
     /**
      * Get the repositories for an organization by name.
@@ -71,7 +71,7 @@ export class GitHub {
         querryUri += args.filter(s => typeof s === "string").join("/");
         let last = args[args.length - 1];
         let params = typeof last === "object" ? last : undefined;
-        if (params || GitHub.access_token) {
+        if (params || GitHubService.access_token) {
             querryUri += "?";
             let separate = false;
             for(let key in params) {
@@ -79,8 +79,8 @@ export class GitHub {
                 querryUri += (separate ? "&" : "") + key + "=" + params[key];
                 separate = true;
             }
-            if (GitHub.access_token) {
-                querryUri += (separate ? "&" : "") + "access_token" + "=" + GitHub.access_token;
+            if (GitHubService.access_token) {
+                querryUri += (separate ? "&" : "") + "access_token" + "=" + GitHubService.access_token;
                 separate = true;
             }
         }
@@ -98,8 +98,56 @@ export class GitHub {
         utils.openUrl("https://github.com/login/oauth/authorize?client_id=ddad3314e37c5efbf57f&allow_signup=true&scope=repo,user");
     }
 
+    /**
+     * iOS scheme URL entry point.
+     */
+    public static registerForURLIntent() {
+        let handler = args => {
+            console.log("activityResumed!");
+            let intent = args.activity.getIntent();
+            let data = intent.getData();
+            if (data) {
+                let scheme = data.getScheme();
+                let host = data.getHost();
+                if (scheme === "gitcraft" && host === "oauth-cb") {
+                    let code = data.getQueryParameter("code");
+                    let state = data.getQueryParameter("state");
+                    GitHubService.exchangeForAccessToken({ code, state });
+                }
+            }
+        };
+        application.android.on("activityResumed", handler);
+    }
+
+    /**
+     * Android scheme URL entry point.
+     */
+    public static applicationHandleOpenURL(application, url) {
+        let urlComponents = NSURLComponents.componentsWithURLResolvingAgainstBaseURL(url, false);
+        let items = urlComponents.queryItems;
+
+        let code: string = null;
+        let state: string = null;
+        console.log("Items: " + items);
+        items.enumerateObjectsUsingBlock(item => {
+            console.log("   query params: " + item);
+            if (item.name == "code" && !code) {
+                code = item.value;
+            } else if (item.name == "state" && !state) {
+                state = item.value;
+            }
+        });
+
+        GitHubService.exchangeForAccessToken({ code, state });
+        return true;
+    }
+
+    static exchangeForAccessToken(params: { code: string, state: string }) {
+        GitHubService.instance.exchangeForAccessToken(params);
+    }
+
     exchangeForAccessToken(params: { code: string, state: string }) {
-        console.log("exchangeForAccessToken: " + params.code + " " + this.id);
+        console.log("exchangeForAccessToken: " + params.code + " " + params.state);
         // TODO: Verify **state**
         console.log("exchangeForAccessToken " + params.code + " " + params.state);
         let url = "https://github.com/login/oauth/access_token";
@@ -118,19 +166,63 @@ export class GitHub {
                 token_type:"bearer",
                 scope: string,
             } = result.json();
-            console.log("result " + this.id + " " + JSON.stringify(resultJson));
+            console.log("result " + JSON.stringify(resultJson));
 
             // TODO: Revoke existing tokens and persist the access_token for later use (even after app restart)...
             this.zone.run(() => {
-                GitHub.access_token = resultJson.access_token;
+                GitHubService.access_token = resultJson.access_token;
                 this.authorizedChange.emit({});
                 console.log("in NgZone " + this.zone);
-
                 this.requestUser();
+
+                // Save the token...
+                this.persistToken(GitHubService.access_token);
             });
         }).catch(error => {
             console.log("OAuth error: " + error);
         });
+    }
+
+    private persistToken(token: string) {
+        // iOS Key chain...
+        // // Try save in keychain!
+        // console.log("Try save in keychain");
+        // declare var NSString, NSUTF8StringEncoding,
+        //     SecItemCopyMatching, SecItemAdd,
+        //     kSecClassGenericPassword,
+        //     kSecClass, kSecMatchLimit, kSecMatchLimitOne,
+        //     kSecAttrGeneric, kSecReturnAttributes, kCFBooleanTrue,
+        //     kSecValueData,
+        //     noErr, errSecItemNotFound,
+        //     interop;
+
+        // let keychainItemId = NSString.stringWithString("org.nativescript.GitCraft:OAuth2.token").dataUsingEncoding(NSUTF8StringEncoding);
+        // let query = {
+        //     [kSecClass]: kSecClassGenericPassword,
+        //     [kSecMatchLimit]: kSecMatchLimitOne,
+        //     [kSecAttrGeneric]: keychainItemId,
+        //     [kSecReturnAttributes]: kCFBooleanTrue
+        // }
+        // let out = new interop.Reference();
+        // console.log("Query keychain");
+        // let keychainError = SecItemCopyMatching(query, out);
+        // console.log("Error: " + keychainError);
+        // console.log("Result ref: " + out);
+        // console.log("Result value: " + out.value);
+
+        // if (keychainError === noErr) {
+        //     console.log("Success!");
+        // } else if (keychainError === errSecItemNotFound) {
+        //     console.log("Not found.");
+        //     let addError = SecItemAdd({
+        //         [kSecAttrGeneric]: keychainItemId,
+        //         [kSecClass]: kSecClassGenericPassword,
+        //         [kSecValueData]: NSString.stringWithString("ASDSADASD").dataUsingEncoding(NSUTF8StringEncoding)
+        //     }, null);
+        //     console.log("SecItemAdd error code: " + addError);
+        // } else {
+        //     console.log("Unknown error.");
+        // }
     }
 
     private requestUser() {
@@ -141,15 +233,6 @@ export class GitHub {
         })
     }
 }
-
-export const GITHUB_SERVICE_PROVIDER = [
-    provide(GitHub, {
-        deps: [Http, NgZone],
-        useFactory: (http: Http, zone: NgZone): GitHub => {
-            return GitHub.getInstance(http, zone);
-        }
-    })
-];
 
 export interface Organization {
     name: string;

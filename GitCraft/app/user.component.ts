@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {GitHub, Repository, Organization, Milestone } from "./github.service";
+import {GitHubService, Repository, Organization, Milestone } from "./github.service";
 import {Router, ActivatedRoute} from "@angular/router";
 import {Location} from '@angular/common';
 
@@ -9,7 +9,7 @@ import {Location} from '@angular/common';
     styleUrls: ["user.component.css"]
 })
 export class UserComponent {
-    constructor(public github: GitHub, public location: Location) {
+    constructor(public github: GitHubService, public location: Location) {
         console.log("Create UserComponent");
     }
 }

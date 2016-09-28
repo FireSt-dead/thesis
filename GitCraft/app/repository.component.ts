@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {GitHub, Repository, Organization, Milestone } from "./github.service";
+import {GitHubService, Repository, Organization, Milestone } from "./github.service";
 import {ItemEventData} from "ui/list-view";
 import {Router, ActivatedRoute} from "@angular/router";
 import {MilestoneComponent} from "./milestone.component";
@@ -19,7 +19,7 @@ export class RepositoryComponent {
     openMilestones: Milestone[];
     closedMilestones: Milestone[];
 
-    constructor(private github: GitHub, private router: Router, private route: ActivatedRoute, private location: Location) {
+    constructor(private github: GitHubService, private router: Router, private route: ActivatedRoute, private location: Location) {
         console.log("Create RepositoriesComponent");
     }
 

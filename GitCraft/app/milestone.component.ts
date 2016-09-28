@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {GitHub, Repository, Organization, Milestone, Issue } from "./github.service";
+import {GitHubService, Repository, Organization, Milestone, Issue } from "./github.service";
 import {ItemEventData} from "ui/list-view";
 import {Router, ActivatedRoute} from "@angular/router";
 import {BackgroundColorPipe, ColorPipe} from "./github.color.pipe";
@@ -8,8 +8,7 @@ import {Location} from '@angular/common';
 @Component({
     selector: "Milestone",
     templateUrl: "milestone.component.html",
-    styleUrls: ["milestone.component.css"],
-    pipes: [BackgroundColorPipe, ColorPipe]
+    styleUrls: ["milestone.component.css"]
 })
 export class MilestoneComponent {
 
@@ -27,7 +26,7 @@ export class MilestoneComponent {
     // Only if authorized...
     myIssues: Issue[];
 
-    constructor(private github: GitHub, private router: Router, private route: ActivatedRoute, private location: Location) {
+    constructor(private github: GitHubService, private router: Router, private route: ActivatedRoute, private location: Location) {
         console.log("Create MilestoneComponent");
     }
 
