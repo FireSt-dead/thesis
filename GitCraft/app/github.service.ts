@@ -17,9 +17,12 @@ export class GitHubService {
     constructor(private http: Http, public zone: NgZone) {
         console.log("New GitHub instance!");
         if (GitHubService.instance) {
-            throw "GitHubService can be instantiated only once.";
+            console.log("GitHubService can be instantiated only once.");
+            return GitHubService.instance;
         }
         GitHubService.instance = this;
+
+        // TODO: restoreToken and request user on success...
     }
 
     @Output() authorizedChange = new EventEmitter();
@@ -170,12 +173,56 @@ export class GitHubService {
                 GitHubService.access_token = resultJson.access_token;
                 this.authorizedChange.emit({});
                 console.log("in NgZone " + this.zone);
-
                 this.requestUser();
+
+                // Save the token...
+                this.persistToken(GitHubService.access_token);
             });
         }).catch(error => {
             console.log("OAuth error: " + error);
         });
+    }
+
+    private persistToken(token: string) {
+        // iOS Key chain...
+        // // Try save in keychain!
+        // console.log("Try save in keychain");
+        // declare var NSString, NSUTF8StringEncoding,
+        //     SecItemCopyMatching, SecItemAdd,
+        //     kSecClassGenericPassword,
+        //     kSecClass, kSecMatchLimit, kSecMatchLimitOne,
+        //     kSecAttrGeneric, kSecReturnAttributes, kCFBooleanTrue,
+        //     kSecValueData,
+        //     noErr, errSecItemNotFound,
+        //     interop;
+
+        // let keychainItemId = NSString.stringWithString("org.nativescript.GitCraft:OAuth2.token").dataUsingEncoding(NSUTF8StringEncoding);
+        // let query = {
+        //     [kSecClass]: kSecClassGenericPassword,
+        //     [kSecMatchLimit]: kSecMatchLimitOne,
+        //     [kSecAttrGeneric]: keychainItemId,
+        //     [kSecReturnAttributes]: kCFBooleanTrue
+        // }
+        // let out = new interop.Reference();
+        // console.log("Query keychain");
+        // let keychainError = SecItemCopyMatching(query, out);
+        // console.log("Error: " + keychainError);
+        // console.log("Result ref: " + out);
+        // console.log("Result value: " + out.value);
+
+        // if (keychainError === noErr) {
+        //     console.log("Success!");
+        // } else if (keychainError === errSecItemNotFound) {
+        //     console.log("Not found.");
+        //     let addError = SecItemAdd({
+        //         [kSecAttrGeneric]: keychainItemId,
+        //         [kSecClass]: kSecClassGenericPassword,
+        //         [kSecValueData]: NSString.stringWithString("ASDSADASD").dataUsingEncoding(NSUTF8StringEncoding)
+        //     }, null);
+        //     console.log("SecItemAdd error code: " + addError);
+        // } else {
+        //     console.log("Unknown error.");
+        // }
     }
 
     private requestUser() {
