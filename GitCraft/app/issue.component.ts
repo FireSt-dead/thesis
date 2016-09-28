@@ -1,14 +1,12 @@
 import {Component, OnInit, OnDestroy, NgZone, } from "@angular/core";
 import {Router, ActivatedRoute} from "@angular/router";
-import {GitHub, Issue, Comment} from "./github.service";
-import {BackgroundColorPipe, ColorPipe} from "./github.color.pipe";
+import {GitHubService, Issue, Comment} from "./github.service";
 import {Location} from '@angular/common';
 
 @Component({
     selector: "Issue",
     templateUrl: "issue.component.html",
     styleUrls: ["issue.component.css"],
-    pipes: [BackgroundColorPipe, ColorPipe]
 })
 export class IssueComponent implements OnInit {
     private owner: string;
@@ -18,7 +16,7 @@ export class IssueComponent implements OnInit {
     public issue: Issue;
     public comments: Comment[]; 
 
-    constructor(public github: GitHub, public router: Router, private route: ActivatedRoute, private location: Location) {
+    constructor(public github: GitHubService, public router: Router, private route: ActivatedRoute, private location: Location) {
         console.log("new IssueComponent");
     }
 
