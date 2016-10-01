@@ -12,6 +12,7 @@ export class GitHubService {
 
     private static access_token: string;
     private static instance: GitHubService;
+    private static OAuthRequestURL: string = "https://github.com/login/oauth/authorize?client_id=ddad3314e37c5efbf57f&allow_signup=true&scope=repo,user";
 
     public authenticatedUser: User;
 
@@ -94,9 +95,9 @@ export class GitHubService {
             .then(response => Promise.resolve(response.json()));
     }
 
-    requestOAuth() {
+    public requestOAuth() {
         // TODO: Create **state** and store it for safe keeping untill exchangeForAccessToken is called.
-        utils.openUrl("https://github.com/login/oauth/authorize?client_id=ddad3314e37c5efbf57f&allow_signup=true&scope=repo,user");
+        utils.openUrl(GitHubService.OAuthRequestURL);
     }
 
     /**
@@ -147,7 +148,7 @@ export class GitHubService {
         GitHubService.instance.exchangeForAccessToken(params);
     }
 
-    exchangeForAccessToken(params: { code: string, state: string }) {
+    private exchangeForAccessToken(params: { code: string, state: string }) {
         console.log("exchangeForAccessToken: " + params.code + " " + params.state);
         // TODO: Verify **state**
         console.log("exchangeForAccessToken " + params.code + " " + params.state);
