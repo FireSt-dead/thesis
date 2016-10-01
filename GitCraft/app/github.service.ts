@@ -1,4 +1,5 @@
-import { Injectable, Input, Output, EventEmitter, NgZone } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
+import { Input, Output, EventEmitter } from '@angular/core';
 import { Http, RequestMethod } from '@angular/http';
 import {Headers} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
