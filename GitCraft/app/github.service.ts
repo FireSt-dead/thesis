@@ -194,7 +194,8 @@ export class GitHubService {
         //     kSecClassGenericPassword,
         //     kSecClass, kSecMatchLimit, kSecMatchLimitOne,
         //     kSecAttrGeneric, kSecReturnAttributes, kCFBooleanTrue,
-        //     kSecValueData,
+        //   
+        //  kSecValueData,
         //     noErr, errSecItemNotFound,
         //     interop;
 
@@ -289,24 +290,9 @@ export interface Milestone {
     closed_issues: number;
     state: "open" | "closed";
 
-    /**
-     * Created at date in a string format: 2016-07-26T11:21:43Z.
-     */
     created_at: string;
-
-    /**
-     * Created at date in a string format: 2016-07-26T11:21:43Z.
-     */
     updated_at: string;
-
-    /**
-     * Created at date in a string format: 2016-07-26T11:21:43Z.
-     */
     due_on: string;
-
-    /**
-     * Created at date in a string format: 2016-07-26T11:21:43Z.
-     */
     closed_at: string;
 }
 

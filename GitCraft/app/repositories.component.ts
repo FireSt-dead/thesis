@@ -41,11 +41,6 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
         console.log("Search: " + value);
     }
 
-    public onClear() {
-        console.log("onClear");
-        this.listOwnRepos();
-    }
-
     private listOwnRepos() {
         if (!this.github.authorized) {
             return;
@@ -65,6 +60,11 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
                 this.loading = false;
             }
         );
+    }
+
+    public onClear() {
+        console.log("onClear");
+        this.listOwnRepos();
     }
 
     public onSearch(text: string) {

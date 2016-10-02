@@ -49,12 +49,7 @@ export class MilestoneComponent {
                         this.openIssues = result.filter(issue => issue.state === "open");
                         this.closedIssues = result.filter(issue => issue.state === "closed");
 
-                        console.log(this.github);
-                        console.log(this.github.authenticatedUser);
-                        console.log(this.github.authenticatedUser.login);
-
                         if (this.github.authenticatedUser) {
-                            console.log("Search for " + this.github.authenticatedUser.login);
                             this.myIssues = result.filter(issue => issue.assignees && issue.assignees.some(asignee => {
                                 console.log(" - " + asignee.login);
                                 return asignee.login === this.github.authenticatedUser.login;
